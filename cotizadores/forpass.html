@@ -659,9 +659,8 @@ details.adv .inner{padding:4px 14px 14px;}
         <summary>Notas generales</summary>
         <div class="inner">
           <div class="field">
-            <textarea id="fNotas" rows="4">No se incluye viáticos debido a que se deberá contar con un programa de instalación con fechas para realizar cotizaciones y presentar una factura consolidada por todos los viáticos que correspondan.
-Será necesario definir el número de capacitaciones</textarea>
-            <div class="hint">Una nota por línea.</div>
+            <textarea id="fNotas" rows="4" placeholder="Notas adicionales (opcional), una por línea…"></textarea>
+            <div class="hint">Estas dos notas fijas siempre salen en el PDF: “Precios no incluyen IVA.” y “Será necesario definir el número de capacitaciones.” Aquí puedes agregar notas adicionales, una por línea.</div>
           </div>
         </div>
       </details>
@@ -869,6 +868,9 @@ function notesHTML(st){
       : `<div class="n-line">${esc(l)}</div>`).join('');
   return `
   <div class="notes">
+    <div class="n-bold">Notas generales:</div>
+    <div class="n-line">Precios no incluyen IVA.</div>
+    <div class="n-line">Será necesario definir el número de capacitaciones.</div>
     ${notas}
     <div class="n-bold" style="margin-top:6px">Puntos importantes:</div>
     ${puntos}
