@@ -629,6 +629,11 @@ details.adv .inner{padding:4px 14px 14px;}
         <label>Monto de arranque y onboarding (MX$)</label>
         <input type="text" id="fArranque" inputmode="numeric" placeholder="Ej. 16,000">
       </div>
+      <label class="check"><input type="checkbox" id="fIncViaticos"> Incluir viáticos</label>
+      <div class="field" id="wrapViaticos">
+        <label>Monto de viáticos (MX$)</label>
+        <input type="text" id="fViaticos" inputmode="numeric" placeholder="Ej. 5,000">
+      </div>
 
       <details class="adv">
         <summary>Editar textos de mensualidades (opcional)</summary>
@@ -774,6 +779,8 @@ function getState(){
     primerPago: parseISO($('fPrimerPago').value || hoyISO()),
     incArranque: $('fIncArranque').checked,
     arranque: parseFloat($('fArranque').value.replace(/,/g,''))||0,
+    incViaticos: $('fIncViaticos').checked,
+    viaticos: parseFloat($('fViaticos').value.replace(/,/g,''))||0,
     textosMens: $('fTextosMens').value.split('\n'),
     notas: $('fNotas').value.split('\n').map(s=>s.trim()).filter(Boolean),
     puntos: $('fPuntos').value.split('\n').map(s=>s.trim()).filter(Boolean),
@@ -792,13 +799,19 @@ function buildRows(st){
     const fecha = fmtCorta(addMonths(st.primerPago, i-1));
     // Texto personalizado por mensualidad (línea i del cuadro opcional); vacío = texto automático
     const textoCustom = (st.textosMens[i-1]||'').trim();
-    if(i===1 && st.incArranque && st.arranque>0){
+    const arr = st.incArranque && st.arranque>0 ? st.arranque : 0;
+    const via = st.incViaticos && st.viaticos>0 ? st.viaticos : 0;
+    if(i===1 && (arr>0 || via>0)){
+      const extras = (arr ? ' + pago inicial de arranque' : '') + (via ? ' + viáticos' : '');
+      const subParts = [`$${Math.round(renta).toLocaleString('en-US')} renta`];
+      if(arr) subParts.push(`$${Math.round(arr).toLocaleString('en-US')} arranque y onboarding`);
+      if(via) subParts.push(`$${Math.round(via).toLocaleString('en-US')} viáticos`);
       rows.push({
         n:i, fecha,
-        main: textoCustom || `Mensualidad 1 de ${st.meses} + pago inicial de arranque`,
-        sub:`$${Math.round(renta).toLocaleString('en-US')} renta + $${Math.round(st.arranque).toLocaleString('en-US')} arranque y onboarding`,
+        main: textoCustom || `Mensualidad 1 de ${st.meses}${extras}`,
+        sub: subParts.join(' + '),
         precio: money(st.precio), modulos: st.modulos,
-        importe: money(renta + st.arranque)
+        importe: money(renta + arr + via)
       });
     } else {
       rows.push({
@@ -933,10 +946,13 @@ function render(){
   const st = getState();
   const rows = buildRows(st);
   const renta = st.precio * st.modulos;
-  const total = renta*st.meses + (st.incArranque ? st.arranque : 0);
+  const total = renta*st.meses + (st.incArranque ? st.arranque : 0) + (st.incViaticos ? st.viaticos : 0);
   $('totContrato').textContent = money(total);
-  $('totDetalle').textContent = `${money(renta)} × ${st.meses} mensualidades` + (st.incArranque&&st.arranque>0 ? ` + ${money(st.arranque)} arranque` : '');
+  $('totDetalle').textContent = `${money(renta)} × ${st.meses} mensualidades`
+    + (st.incArranque&&st.arranque>0 ? ` + ${money(st.arranque)} arranque` : '')
+    + (st.incViaticos&&st.viaticos>0 ? ` + ${money(st.viaticos)} viáticos` : '');
   $('wrapArranque').style.display = st.incArranque ? '' : 'none';
+  $('wrapViaticos').style.display = st.incViaticos ? '' : 'none';
 
   // primer intento: notas en la última página de la tabla; se mide y se decide
   mountPages(buildPagesHTML(st, rows, true));
@@ -978,7 +994,7 @@ function fmtMiles(el){
   while(pos < el.value.length && seen < digitsBefore){ if(/\d/.test(el.value[pos])) seen++; pos++; }
   el.setSelectionRange(pos, pos);
 }
-['fPrecio','fArranque'].forEach(id=>{ $(id).addEventListener('input', ()=>fmtMiles($(id))); });
+['fPrecio','fArranque','fViaticos'].forEach(id=>{ $(id).addEventListener('input', ()=>fmtMiles($(id))); });
 
 document.querySelectorAll('input, select, textarea').forEach(el=>{
   el.addEventListener('input', ()=>{
@@ -1025,11 +1041,12 @@ $('btnDownload').addEventListener('click', downloadPDF);
 function limpiarTodo(){
   if(!confirm('¿Borrar todos los datos de la cotización y empezar desde cero?')) return;
   // Campos propios de cada cotización: quedan vacíos
-  ['fCliente','fVigencia','fPrecio','fModulos','fMeses','fArranque','fTextosMens'].forEach(id=>{ $(id).value=''; });
+  ['fCliente','fVigencia','fPrecio','fModulos','fMeses','fArranque','fViaticos','fTextosMens'].forEach(id=>{ $(id).value=''; });
   // Textos estándar del formato: vuelven a su versión original
   ['fConcepto','fNotas','fPuntos','fSLA','fTel','fMail','fOficina'].forEach(id=>{ $(id).value = $(id).defaultValue; });
   $('fTipo').value = 'hw';
   $('fIncArranque').checked = true;
+  $('fIncViaticos').checked = false;
   $('fFecha').value = hoyISO();
   $('fPrimerPago').value = hoyISO();
   render();
