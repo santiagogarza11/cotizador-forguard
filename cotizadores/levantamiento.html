@@ -902,10 +902,10 @@ const SCHEMA_SITIO = [
   ]},
 
   { id:'horariosServicio', titulo:'Horarios de servicio del comedor', campos:[
-    { k:'horariosServicio', l:'Horarios de servicio', type:'lista', etiqueta:'Servicio', max:6,
-      h:'En qué ventanas se sirve la comida. Agrega uno por cada servicio del día.',
+    { k:'horariosServicio', l:'Horarios de servicio', type:'lista', etiqueta:'Turno', max:6,
+      h:'En qué ventanas se sirve la comida. Agrega un turno por cada servicio del día.',
       campos:[
-        { k:'nombre',  l:'Servicio', type:'text', ph:'Ej. Comida' },
+        { k:'nombre',  l:'Servicio', type:'select', o:OP_SERVICIO },
         { k:'horaIni', l:'Desde',    type:'hora' },
         { k:'horaFin', l:'Hasta',    type:'hora' }
       ]}
