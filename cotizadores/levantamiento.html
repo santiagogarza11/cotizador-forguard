@@ -57,6 +57,53 @@ body{
 }
 .lv-liga:hover{color:var(--marca);}
 
+/* Listas inteligentes: contactos, turnos, horarios de servicio */
+.lv-lista{display:flex; flex-direction:column; gap:10px;}
+.lv-item{border:1px solid var(--linea); border-radius:10px; background:var(--blanco); padding:11px 12px 12px;}
+.lv-item-cab{display:flex; align-items:center; gap:8px; margin-bottom:9px;}
+.lv-item-num{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--marca);}
+.lv-item-quitar{
+  margin-left:auto; border:1px solid var(--linea); background:var(--blanco); cursor:pointer;
+  font:inherit; font-size:11px; font-weight:600; color:var(--gris);
+  border-radius:7px; padding:3px 9px; transition:color .15s, border-color .15s;
+}
+.lv-item-quitar:hover{color:var(--error); border-color:var(--error);}
+.lv-item-campos{display:grid; grid-template-columns:repeat(var(--lv-cols,2), 1fr); gap:9px;}
+.lv-item-campo{display:flex; flex-direction:column; gap:4px; min-width:0;}
+.lv-item-campo > span{font-size:11px; font-weight:500; color:var(--gris);}
+.lv-item-campo > span i{font-style:normal; color:#a3aabb;}
+.lv-item-campo input, .lv-item-campo select{
+  width:100%; padding:8px 10px; border:1px solid #d4d9e6; border-radius:7px;
+  font:inherit; font-size:12.5px; background:#fbfcfe; color:var(--tinta);
+}
+.lv-item-campo input:focus, .lv-item-campo select:focus{outline:none; border-color:var(--acento); background:var(--blanco);}
+.lv-item-pie{display:flex; align-items:center;}
+.lv-item-agregar{
+  border:1px dashed var(--marca-borde); background:var(--marca-suave); cursor:pointer;
+  font:inherit; font-size:12px; font-weight:600; color:var(--marca);
+  border-radius:8px; padding:8px 14px; transition:border-color .15s;
+}
+.lv-item-agregar:hover{border-style:solid; border-color:var(--acento);}
+.lv-item-tope{font-size:11.5px; color:var(--gris);}
+@media (max-width:760px){ .lv-item-campos{grid-template-columns:1fr 1fr;} }
+@media (max-width:520px){ .lv-item-campos{grid-template-columns:1fr;} }
+
+/* Nota informativa dentro del formulario */
+.lv-aviso-campo{
+  font-size:12px; color:var(--marca); background:var(--marca-suave);
+  border:1px solid var(--marca-borde); border-radius:8px; padding:9px 12px; line-height:1.45;
+}
+
+/* Aviso del panel cuando todavía no se elige la empresa que presta el servicio */
+.lv-marca-chip.lv-sin-empresa{border-left-color:var(--alerta);}
+.lv-marca-chip.lv-sin-empresa b{color:var(--alerta);}
+.lv-liga{
+  border:0; background:none; padding:0; cursor:pointer;
+  font:inherit; font-size:inherit; color:var(--acento); font-weight:600;
+  text-decoration:underline; text-underline-offset:2px;
+}
+.lv-liga:hover{color:var(--marca);}
+
 /* Lista de contactos del cliente (hasta 5) */
 .lv-contactos{display:flex; flex-direction:column; gap:10px;}
 .lv-contacto{
@@ -306,7 +353,24 @@ tr.lv-falta .lv-ctrl{border-color:var(--alerta); background:#fffefa;}
 .lv-tabla-resp tbody th small{display:block; font-size:10.5px; color:var(--gris); font-weight:400; margin-top:2px;}
 .lv-tabla-resp tbody td{padding:6px 10px; border-bottom:1px solid var(--linea); vertical-align:middle;}
 .lv-tabla-resp tbody tr:hover{background:var(--marca-suave);}
-.lv-tabla-resp td.lv-td-resp{width:210px;}
+.lv-tabla-resp th.lv-th-x{width:104px; text-align:center;}
+.lv-tabla-resp th.lv-th-per{width:170px;}
+.lv-tabla-resp td.lv-td-x{text-align:center; width:104px;}
+.lv-marcax{
+  width:26px; height:26px; border:1.5px solid #d4d9e6; border-radius:6px;
+  background:var(--blanco); cursor:pointer; font:inherit; font-size:13px; font-weight:700;
+  line-height:1; color:var(--marca); display:inline-grid; place-items:center;
+  transition:border-color .15s, background .15s;
+}
+.lv-marcax:hover{border-color:var(--acento);}
+.lv-marcax-on{border-color:var(--marca); background:var(--marca-suave);}
+.lv-marcax:focus-visible{outline:2px solid var(--acento); outline-offset:2px;}
+.lv-resp-obs{
+  width:100%; min-width:150px; padding:7px 9px; border:1px solid #d4d9e6; border-radius:7px;
+  font:inherit; font-size:12px; background:#fbfcfe; color:var(--tinta);
+}
+.lv-resp-obs:focus{outline:none; border-color:var(--acento); background:var(--blanco);}
+.lv-tabla-resp tbody th{white-space:normal; min-width:210px;}
 .lv-tabla-resp select{padding:7px 10px; font-size:12.5px;}
 
 /* ---------------------------- Panel lateral ----------------------------- */
@@ -723,13 +787,22 @@ const OP_GIRO = ['Automotriz','Autopartes','Metalmecánica','Electrónica','Alim
 
 const OP_SERVICIO = ['Cocina en sitio','Catering tradicional','Box lunch'];
 
-const OP_COBRO = ['Por charola servida','Por charola producida','Cuota fija mensual',
-                  'Precio por comensal registrado','Costo + fee de administración',
-                  'Concesión (cobra al comensal)','Mixto'];
-
 /* Todos los precios de este formato se manejan SIN IVA. */
 
-const OP_VIGENCIA = ['6 meses','1 año','2 años','3 años','Indefinido con aviso','Por definir'];
+/* Periodicidad de cada renglón de la tabla de responsabilidades. */
+const OP_PERIODO = ['Cuando la operación lo requiera','Diaria','Semanal','Mensual','N/A'];
+
+/* Horas de media en media hora, de 12:00 AM a 11:30 PM (48 opciones). */
+const LV_HORAS = (function(){
+  const out = [];
+  for(let min = 0; min < 24 * 60; min += 30){
+    const h24 = Math.floor(min / 60);
+    const ampm = h24 < 12 ? 'AM' : 'PM';
+    const h12  = (h24 % 12) === 0 ? 12 : (h24 % 12);
+    out.push(h12 + ':' + String(min % 60).padStart(2, '0') + ' ' + ampm);
+  }
+  return out;
+})();
 
 const OP_MODO_CONSUMO = ['Por turno','Total por día','Estimado con % de captura'];
 
@@ -749,18 +822,21 @@ const SCHEMA = [
     { k:'rfc',              l:'RFC del cliente',         type:'text', ancho:'medio', h:'12 caracteres (moral) o 13 (física). También suele llegar hasta el fallo.' },
     { k:'giro',             l:'Giro o industria',        type:'select', o:OP_GIRO, ancho:'medio' },
     { k:'giroOtro',         l:'¿Cuál giro?',             type:'text', dep:est=>valDep(est,'giro')==='Otro', h:'Escribe el giro del cliente' },
-    { k:'contactos',        l:'Contactos del cliente',   type:'contactos', h:'Hasta 5 contactos, con puesto, teléfono y correo' },
+    { k:'contactos',        l:'Contactos del cliente',   type:'lista', etiqueta:'Contacto', max:5,
+      h:'Hasta 5 contactos. Quien autoriza y quien opera suelen ser distintos.',
+      campos:[
+        { k:'nombre', l:'Nombre',   type:'text', ph:'Nombre y apellido' },
+        { k:'puesto', l:'Puesto',   type:'text', ph:'Ej. Gerente de planta' },
+        { k:'tel',    l:'Teléfono', type:'text', ph:'10 dígitos' },
+        { k:'correo', l:'Correo',   type:'text', ph:'nombre@empresa.com' }
+      ]},
     { k:'fechaLev',         l:'Fecha del levantamiento', type:'date', ancho:'medio' },
     { k:'notasCliente',     l:'Notas del cliente',       type:'textarea', h:'Antecedentes, proveedor actual, motivo del cambio' }
   ]},
 
   { id:'comercial', titulo:'Modelo comercial', campos:[
-    { k:'tipoServicio',     l:'Tipo de servicio',        type:'select', crit:true, o:OP_SERVICIO },
-    { k:'esquemaCobro',     l:'Esquema de cobro',        type:'select', crit:true, o:OP_COBRO, h:'Define contra qué se factura cada mes' },
-    { k:'quienEquipo',      l:'¿Quién pone el equipo?',  type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'quienPersonal',    l:'¿Quién pone el personal?',type:'select', o:TOKEN_RESP, ancho:'medio' },
+    { k:'aceptanGarantias', l:'¿Aceptan garantías?',     type:'select', o:['Sí','No','Indefinido'], ancho:'medio' },
     { k:'diasCredito',      l:'Días de crédito',         type:'text', u:'días', ancho:'medio', h:'Escribe los días que pida el cliente. Ej. 30, 45, 60, 90' },
-    { k:'vigencia',         l:'Vigencia propuesta',      type:'select', o:OP_VIGENCIA, ancho:'medio' },
     { k:'fechaArranque',    l:'Fecha estimada de arranque', type:'date', ancho:'medio' },
     { k:'penalizaciones',   l:'Penalizaciones o niveles de servicio', type:'textarea', h:'Multas por retraso, calidad, faltantes' },
     { k:'notasComercial',   l:'Notas del modelo comercial', type:'textarea' }
@@ -772,22 +848,30 @@ const SCHEMA = [
       h:'Anota aquí todo lo que aplique: nombre o número de la licitación, fechas, formato de entrega, fianzas, requisitos documentales, criterios de evaluación y junta de aclaraciones.' }
   ]},
 
-  { id:'responsabilidades', titulo:'Tabla de responsabilidades', campos:[
-    { k:'respEquipamiento', l:'Equipamiento de cocina',      type:'select', o:TOKEN_RESP, ancho:'medio', h:'Estufas, refrigeración, barras, campana' },
-    { k:'respMantenimiento',l:'Mantenimiento del equipo',    type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respPersonal',     l:'Personal de servicio',        type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respInsumos',      l:'Insumos y abarrotes',         type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respLimpieza',     l:'Limpieza del comedor',        type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respPlagas',       l:'Control de plagas',           type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respUtensilios',   l:'Utensilios y loza',           type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respGas',          l:'Gas',                         type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respEnergia',      l:'Energía eléctrica',           type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respAgua',         l:'Agua',                        type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respResiduos',     l:'Manejo de residuos',          type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respTransporte',   l:'Transporte de alimentos',     type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respUniformes',    l:'Uniformes',                   type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respExamenes',     l:'Exámenes médicos del personal',type:'select', o:TOKEN_RESP, ancho:'medio' },
-    { k:'respNotas',        l:'Aclaraciones de responsabilidades', type:'textarea', h:'Todo lo que quedó como Compartido o Por definir' }
+  /* Cada renglón es un concepto: se marca a quién le toca, con qué periodicidad
+     y las observaciones del caso. Agregar un concepto = una línea más aquí. */
+  { id:'responsabilidades', titulo:'Tabla de responsabilidades', vista:'resp', campos:[
+    { k:'respAnalisisClinicos',   l:'Análisis clínicos para personal',                 type:'resp' },
+    { k:'respMuestreos',          l:'Muestreos bacteriológicos',                       type:'resp' },
+    { k:'respMantPreventivo',     l:'Mantenimiento mayor preventivo',                  type:'resp' },
+    { k:'respMantCorrectivo',     l:'Mantenimiento mayor correctivo',                  type:'resp' },
+    { k:'respReposEquipoMayor',   l:'Reposición de equipo mayor',                      type:'resp' },
+    { k:'respReposLoza',          l:'Reposición de loza, plaqué y cristalería',        type:'resp' },
+    { k:'respConsumos',           l:'Consumo de agua potable, energía eléctrica y/o gas', type:'resp' },
+    { k:'respPuntoVenta',         l:'Punto de venta (sistema de conciliación)',        type:'resp' },
+    { k:'respInternet',           l:'Internet',                                        type:'resp' },
+    { k:'respBasuraOrganica',     l:'Recolección y exterminio de basura orgánica',     type:'resp' },
+    { k:'respTrampasGrasa',       l:'Limpieza y desazolve de trampas de grasa',        type:'resp' },
+    { k:'respLimpiezaComensales', l:'Limpieza de área de comensales',                  type:'resp' },
+    { k:'respArticulosLimpieza',  l:'Artículos y suministros de limpieza',             type:'resp' },
+    { k:'respArticulosLavaloza',  l:'Artículos de máquina lavaloza',                   type:'resp' },
+    { k:'respFumigacion',         l:'Fumigación',                                      type:'resp' },
+    { k:'respTransportePersonal', l:'Transporte de personal',                          type:'resp' },
+    { k:'respEquipoMenor',        l:'Equipo menor',                                    type:'resp' },
+    { k:'respEquipoMayor',        l:'Equipo mayor',                                    type:'resp' },
+    { k:'respRemodelacion',       l:'Remodelación del comedor',                        type:'resp' },
+    { k:'respDesechablesBox',     l:'Desechables para box lunch',                      type:'resp' },
+    { k:'respSuministroAgua',     l:'Suministro de agua',                              type:'resp' }
   ]}
 
 ];
@@ -806,12 +890,25 @@ const SCHEMA_SITIO = [
   ]},
 
   { id:'turnos', titulo:'Turnos y personal', campos:[
-    { k:'hcT1', l:'Turno 1 — personas', type:'num', crit:true, u:'personas', ancho:'medio', h:'Headcount total del turno, no los que comen' },
-    { k:'t1Horario',  l:'Turno 1 — horario',  type:'text', ancho:'medio', h:'Ej. 06:00 a 14:00' },
-    { k:'hcT2', l:'Turno 2 — personas', type:'num', u:'personas', ancho:'medio' },
-    { k:'t2Horario',  l:'Turno 2 — horario',  type:'text', ancho:'medio', h:'Déjalo vacío si no hay turno 2' },
-    { k:'hcT3', l:'Turno 3 — personas', type:'num', u:'personas', ancho:'medio' },
-    { k:'t3Horario',  l:'Turno 3 — horario',  type:'text', ancho:'medio', h:'Déjalo vacío si no hay turno 3' }
+    { k:'turnos', l:'Turnos de la planta', type:'lista', etiqueta:'Turno', max:6, crit:true,
+      h:'Empieza con el turno 1 y agrega los que tenga la planta. El headcount es el total del turno, no los que comen.',
+      campos:[
+        { k:'personas', l:'Personas', type:'num',  u:'personas' },
+        { k:'horaIni',  l:'Entrada',  type:'hora' },
+        { k:'horaFin',  l:'Salida',   type:'hora' },
+        { k:'charolas', l:'Charolas por día', type:'num', u:'charolas/día',
+          dep:s=>valDep(s,'modoCaptura')==='Por turno' }
+      ]}
+  ]},
+
+  { id:'horariosServicio', titulo:'Horarios de servicio del comedor', campos:[
+    { k:'horariosServicio', l:'Horarios de servicio', type:'lista', etiqueta:'Servicio', max:6,
+      h:'En qué ventanas se sirve la comida. Agrega uno por cada servicio del día.',
+      campos:[
+        { k:'nombre',  l:'Servicio', type:'text', ph:'Ej. Comida' },
+        { k:'horaIni', l:'Desde',    type:'hora' },
+        { k:'horaFin', l:'Hasta',    type:'hora' }
+      ]}
   ]},
 
   { id:'calendario', titulo:'Calendario operativo', campos:[
@@ -834,9 +931,8 @@ const SCHEMA_SITIO = [
   { id:'consumo', titulo:'Consumo de alimentos', campos:[
     { k:'modoCaptura', l:'Modo de captura del consumo', type:'select', crit:true, o:OP_MODO_CONSUMO,
       h:'Usa "Por turno" si el cliente tiene registros reales; el estimado es el último recurso' },
-    { k:'charolasT1', l:'Charolas del turno 1', type:'num', u:'charolas/día', ancho:'medio', dep:s=>valDep(s,'modoCaptura')==='Por turno' },
-    { k:'charolasT2', l:'Charolas del turno 2', type:'num', u:'charolas/día', ancho:'medio', dep:s=>valDep(s,'modoCaptura')==='Por turno' },
-    { k:'charolasT3', l:'Charolas del turno 3', type:'num', u:'charolas/día', ancho:'medio', dep:s=>valDep(s,'modoCaptura')==='Por turno' },
+    { k:'avisoPorTurno', l:'Captura las charolas dentro de cada turno, arriba en "Turnos y personal".',
+      type:'aviso', dep:s=>valDep(s,'modoCaptura')==='Por turno' },
     { k:'charolasDia', l:'Charolas totales por día', type:'num', u:'charolas/día', dep:s=>valDep(s,'modoCaptura')==='Total por día', h:'Promedio de un día normal, sumando todos los turnos' },
     { k:'capturaPct', l:'Porcentaje de captura', type:'pct', u:'%', dep:s=>valDep(s,'modoCaptura')==='Estimado con % de captura', h:'De cada 100 personas en planta, cuántas comen. Referencia: 80 a 90' },
     { k:'origenConsumo', l:'Origen del dato de consumo', type:'select',
@@ -895,11 +991,12 @@ const MODOS_CAPTURA = {
 function calcSitio(s){
   s = s || {};
 
-  /* --- Headcount --- */
-  const hcT1 = valNum(s.hcT1);
-  const hcT2 = valNum(s.hcT2);
-  const hcT3 = valNum(s.hcT3);
-  const headcountTotal = hcT1 + hcT2 + hcT3;
+  /* --- Headcount: se suma la lista de turnos de la planta ---
+     Los turnos son una lista, así que la planta puede tener los que sean.
+     Si el sitio viene de un respaldo viejo con hcT1/hcT2/hcT3, también se lee. */
+  const turnos = Array.isArray(s.turnos) ? s.turnos : [];
+  let headcountTotal = turnos.reduce((suma, t) => suma + valNum(t && t.personas), 0);
+  if(!turnos.length) headcountTotal = valNum(s.hcT1) + valNum(s.hcT2) + valNum(s.hcT3);
 
   /* --- Calendario --- */
   const diasSemana   = valNum(s.diasSemana);
@@ -909,15 +1006,16 @@ function calcSitio(s){
 
   /* --- Comensales por día, según el modo de captura --- */
   const modoCaptura = s.modoCaptura || MODOS_CAPTURA.ESTIMADO;
-  const charolasT1  = valNum(s.charolasT1);
-  const charolasT2  = valNum(s.charolasT2);
-  const charolasT3  = valNum(s.charolasT3);
   const charolasDia = valNum(s.charolasDia);
   const capturaPct  = valNum(s.capturaPct);   // 85 = 85%
 
+  /* En modo "Por turno", las charolas se capturan dentro de cada turno. */
+  let charolasPorTurno = turnos.reduce((suma, t) => suma + valNum(t && t.charolas), 0);
+  if(!turnos.length) charolasPorTurno = valNum(s.charolasT1) + valNum(s.charolasT2) + valNum(s.charolasT3);
+
   let comensalesDiaCrudo = 0;
   if (modoCaptura === MODOS_CAPTURA.TURNO){
-    comensalesDiaCrudo = charolasT1 + charolasT2 + charolasT3;
+    comensalesDiaCrudo = charolasPorTurno;
   } else if (modoCaptura === MODOS_CAPTURA.DIA){
     comensalesDiaCrudo = charolasDia;
   } else {
@@ -961,7 +1059,7 @@ function calcSitio(s){
   return {
     /* eco de la captura, útil para el Excel y la vista previa */
     modoCaptura: modoCaptura,
-    hcT1: hcT1, hcT2: hcT2, hcT3: hcT3,
+    numTurnos: turnos.length,
     diasSemana: diasSemana, semanasAnio: semanasAnio, diasParo: diasParo,
     precioCharola: precioCharola, subsidioPct: subsidioPct, llevaIva: llevaIva,
 
@@ -1053,12 +1151,19 @@ function calcTotales(estado){
 function autoprueba(){
   const sitioPrueba = {
     _id: 'prueba',
-    hcT1: 400, hcT2: 30, hcT3: 0,
+    turnos: [{ personas: 400 }, { personas: 30 }],
     modoCaptura: 'Estimado con % de captura', capturaPct: 85,
     diasSemana: 5, semanasAnio: 52, diasParo: 0,
     precioCharola: 90, subsidioPct: 24, llevaIva: false
   };
   const r = calcSitio(sitioPrueba);
+
+  /* Un respaldo viejo (con hcT1/hcT2/hcT3 en vez de la lista de turnos) debe
+     seguir dando el mismo headcount. */
+  const viejo = calcSitio(Object.assign({}, sitioPrueba, { turnos: undefined, hcT1: 400, hcT2: 30, hcT3: 0 }));
+  if(viejo.headcountTotal !== r.headcountTotal){
+    console.warn('Autoprueba: un respaldo viejo da headcount distinto', viejo.headcountTotal, 'vs', r.headcountTotal);
+  }
 
   const TOL = 0.005;
   const casos = [
@@ -1132,7 +1237,15 @@ function lvVacio(v){
 
 /* Un check nunca cuenta como "vacío": marcado o no, ya está contestado. */
 function lvCampoVacio(campo, v){
-  return campo.type === 'check' ? false : lvVacio(v);
+  if(campo.type === 'check' || campo.type === 'aviso') return false;
+  /* Una lista cuenta como capturada en cuanto un renglón trae algún dato. */
+  if(campo.type === 'lista' || campo.type === 'contactos'){
+    return !(Array.isArray(v) && v.some(item => item && typeof item === 'object' &&
+      Object.keys(item).some(k => !lvVacio(item[k]) && String(item[k]).trim() !== '')));
+  }
+  /* Un renglón de responsabilidades está capturado si ya se marcó a alguien. */
+  if(campo.type === 'resp') return !(v && typeof v === 'object' && (v.nosotros || v.cliente));
+  return lvVacio(v);
 }
 
 /* Texto -> número. Devuelve null cuando no hay dato (money/pct/num guardan número). */
@@ -1192,7 +1305,7 @@ function lvStore(){ return (typeof LV_STORE !== 'undefined' && LV_STORE) ? LV_ST
 
 /* Solo el control (input/select/…), sin etiqueta. Se reutiliza en la tabla
    de responsabilidades, donde la etiqueta va en la primera columna. */
-function controlHTML(campo, valor, ruta){
+function controlHTML(campo, valor, ruta, contexto){
   const id    = lvIdCampo(ruta, campo.k);
   const base  = 'id="' + id + '" data-ruta="' + esc(ruta + '.' + campo.k) + '" data-tipo="' + esc(campo.type) + '"' +
                 (campo.crit ? ' data-crit="1"' : '');
@@ -1217,8 +1330,21 @@ function controlHTML(campo, valor, ruta){
       return '<label class="lv-check"><input type="checkbox" ' + base + (valor ? ' checked' : '') +
              '><span>' + esc(campo.l) + '</span></label>';
 
+    case 'hora': {
+      const ops = ['<option value="">— Hora —</option>'].concat(
+        LV_HORAS.map(h => '<option value="' + esc(h) + '"' + (String(valor ?? '') === h ? ' selected' : '') + '>' + esc(h) + '</option>')
+      ).join('');
+      return '<select ' + attrs + '>' + ops + '</select>';
+    }
+
+    case 'aviso':
+      return '<p class="lv-aviso-campo">' + esc(campo.l) + '</p>';
+
+    /* 'contactos' es el nombre viejo de la lista de contactos; se mantiene por
+       si algún respaldo guardado todavía lo trae. */
     case 'contactos':
-      return contactosHTML(campo, valor, ruta);
+    case 'lista':
+      return listaHTML(campo, valor, ruta, contexto);
 
     case 'date':
       return '<input type="date" ' + attrs + ' value="' + esc(valor ?? '') + '">';
@@ -1244,66 +1370,61 @@ function controlHTML(campo, valor, ruta){
 }
 
 /* =========================================================================
-   3b. Lista de contactos (hasta LV_MAX_CONTACTOS)
-   El valor es un arreglo de {nombre, puesto, tel, correo}. Se guarda en el
-   estado igual que cualquier otro campo, así que el schema no cambia:
-   agregar la lista fue una línea con type:'contactos'.
+   3b. Listas inteligentes (contactos, turnos, horarios de servicio)
+   Un campo type:'lista' guarda un arreglo de objetos y se describe con su
+   propio sub-schema en campo.campos. Agregar una lista nueva es una línea
+   más en el SCHEMA; agregar una columna, una línea en su sub-schema.
    ========================================================================= */
-const LV_MAX_CONTACTOS = 5;
-
-const LV_CAMPOS_CONTACTO = [
-  { k:'nombre', l:'Nombre',   ph:'Nombre y apellido' },
-  { k:'puesto', l:'Puesto',   ph:'Ej. Gerente de planta' },
-  { k:'tel',    l:'Teléfono', ph:'10 dígitos' },
-  { k:'correo', l:'Correo',   ph:'nombre@empresa.com' }
-];
 
 /* Siempre devuelve un arreglo utilizable, aunque el estado venga vacío o dañado. */
-function lvListaContactos(valor){
-  const lista = Array.isArray(valor) ? valor.filter(c => c && typeof c === 'object') : [];
-  return lista.length ? lista.slice(0, LV_MAX_CONTACTOS) : [{}];
+function lvListaItems(valor){
+  const lista = Array.isArray(valor) ? valor.filter(x => x && typeof x === 'object') : [];
+  return lista.length ? lista : [{}];
 }
 
-function contactosHTML(campo, valor, ruta){
-  const lista = lvListaContactos(valor);
+function listaHTML(campo, valor, ruta, contexto){
+  const sub   = Array.isArray(campo.campos) ? campo.campos : [];
+  const max   = campo.max || 10;
+  const items = lvListaItems(valor).slice(0, max);
   const base  = ruta + '.' + campo.k;
+  const nombre = campo.etiqueta || 'Renglón';
 
-  const filas = lista.map((c, i) =>
-    '<div class="lv-contacto">' +
-      '<div class="lv-contacto-cab">' +
-        '<span class="lv-contacto-num">Contacto ' + (i + 1) + '</span>' +
-        (lista.length > 1
-          ? '<button type="button" class="lv-contacto-quitar" data-acc="quitar-contacto" ' +
+  /* Los sub-campos pueden depender del objeto padre (p. ej. las charolas del
+     turno solo salen si el modo de captura es "Por turno"). */
+  const visibles = sub.filter(f => lvDep(f, contexto));
+
+  const filas = items.map((item, i) =>
+    '<div class="lv-item">' +
+      '<div class="lv-item-cab">' +
+        '<span class="lv-item-num">' + esc(nombre) + ' ' + (i + 1) + '</span>' +
+        (items.length > 1
+          ? '<button type="button" class="lv-item-quitar" data-acc="quitar-item" ' +
             'data-base="' + esc(base) + '" data-i="' + i + '" ' +
-            'aria-label="Quitar contacto ' + (i + 1) + '">Quitar</button>'
+            'aria-label="Quitar ' + esc(nombre.toLowerCase()) + ' ' + (i + 1) + '">Quitar</button>'
           : '') +
       '</div>' +
-      '<div class="lv-contacto-campos">' +
-        LV_CAMPOS_CONTACTO.map(f =>
-          '<label class="lv-contacto-campo">' +
-            '<span>' + esc(f.l) + '</span>' +
-            '<input type="' + (f.k === 'correo' ? 'email' : 'text') + '" autocomplete="off"' +
-              ' data-ruta="' + esc(base + '.' + i + '.' + f.k) + '" data-tipo="text"' +
-              ' value="' + esc(c[f.k] ?? '') + '" placeholder="' + esc(f.ph) + '">' +
+      '<div class="lv-item-campos" style="--lv-cols:' + Math.min(visibles.length, 4) + '">' +
+        visibles.map(f =>
+          '<label class="lv-item-campo">' +
+            '<span>' + esc(f.l) + (f.u ? ' <i>' + esc(f.u) + '</i>' : '') + '</span>' +
+            controlHTML(f, item[f.k], base + '.' + i) +
           '</label>'
         ).join('') +
       '</div>' +
     '</div>'
   ).join('');
 
-  const puedeAgregar = lista.length < LV_MAX_CONTACTOS;
-  const boton = puedeAgregar
-    ? '<button type="button" class="lv-contacto-agregar" data-acc="agregar-contacto" data-base="' + esc(base) + '">' +
-        '+ Agregar contacto</button>'
-    : '<span class="lv-contacto-tope">Máximo ' + LV_MAX_CONTACTOS + ' contactos</span>';
+  const pie = items.length < max
+    ? '<button type="button" class="lv-item-agregar" data-acc="agregar-item" ' +
+      'data-base="' + esc(base) + '" data-max="' + max + '">+ Agregar ' + esc(nombre.toLowerCase()) + '</button>'
+    : '<span class="lv-item-tope">Máximo ' + max + ' ' + esc(nombre.toLowerCase()) + 's</span>';
 
-  return '<div class="lv-contactos">' + filas +
-           '<div class="lv-contacto-pie">' + boton + '</div>' +
-         '</div>';
+  return '<div class="lv-lista">' + filas + '<div class="lv-item-pie">' + pie + '</div></div>';
 }
 
+
 /* Campo completo: etiqueta + control + ayuda + fuente */
-function campoHTML(campo, valor, ruta){
+function campoHTML(campo, valor, ruta, contexto){
   const id     = lvIdCampo(ruta, campo.k);
   const vacio  = lvCampoVacio(campo, valor);
   const clases = ['lv-campo'];
@@ -1314,7 +1435,7 @@ function campoHTML(campo, valor, ruta){
   /* El check trae su propia etiqueta dentro del control */
   if(campo.type === 'check'){
     return '<div class="' + clases.join(' ') + '">' +
-             controlHTML(campo, valor, ruta) +
+             controlHTML(campo, valor, ruta, contexto) +
              (campo.h ? '<div class="lv-ayuda">' + esc(campo.h) + '</div>' : '') +
            '</div>';
   }
@@ -1327,7 +1448,7 @@ function campoHTML(campo, valor, ruta){
 
   return '<div class="' + clases.join(' ') + '">' +
            etiqueta +
-           controlHTML(campo, valor, ruta) +
+           controlHTML(campo, valor, ruta, contexto) +
            (campo.h ? '<div class="lv-ayuda">' + esc(campo.h) + '</div>' : '') +
            fuenteHTML(campo, ruta) +
          '</div>';
@@ -1354,7 +1475,7 @@ function seccionHTML(seccion, datos, ruta, plano){
   const esTabla = seccion.vista === 'resp' || seccion.tabla === true;
   const cuerpo  = esTabla
     ? tablaRespHTML(campos, datos, ruta)
-    : '<div class="lv-campos">' + campos.map(c => campoHTML(c, datos ? datos[c.k] : undefined, ruta)).join('') + '</div>';
+    : '<div class="lv-campos">' + campos.map(c => campoHTML(c, datos ? datos[c.k] : undefined, ruta, datos)).join('') + '</div>';
 
   if(plano){
     return '<div class="lv-sub"><h3>' + esc(seccion.titulo) + '</h3>' + cuerpo + '</div>';
@@ -1364,25 +1485,61 @@ function seccionHTML(seccion, datos, ruta, plano){
          '</section>';
 }
 
-/* Tabla de responsabilidades: una fila por campo */
+/* Nombre del cliente para encabezar su columna; mientras no lo capturen, "Cliente". */
+function lvNombreCliente(){
+  const g = estado.general || {};
+  return String(g.nombreComercial || g.razonSocial || '').trim() || 'Cliente';
+}
+
+/* Con quién se queda cada concepto: nosotros (la empresa elegida) o el cliente. */
+function lvNombreNosotros(){
+  return empresaActiva(estado) || 'Plato Express';
+}
+
+/* Tabla de responsabilidades: un renglón por concepto, con dos casillas
+   excluyentes visualmente pero independientes (marcar las dos = compartido),
+   periodicidad y observaciones. */
 function tablaRespHTML(campos, datos, ruta){
+  const nosotros = lvNombreNosotros();
+  const cliente  = lvNombreCliente();
+
+  const casilla = (c, v, quien) => {
+    const marcada = !!(v && v[quien]);
+    return '<td class="lv-td-x">' +
+             '<button type="button" class="lv-marcax' + (marcada ? ' lv-marcax-on' : '') + '" ' +
+               'data-acc="resp-x" data-ruta="' + esc(ruta + '.' + c.k) + '" data-quien="' + quien + '" ' +
+               'role="checkbox" aria-checked="' + (marcada ? 'true' : 'false') + '" ' +
+               'aria-label="' + esc(c.l + ' — ' + (quien === 'nosotros' ? nosotros : cliente)) + '">' +
+               (marcada ? '✕' : '') +
+             '</button>' +
+           '</td>';
+  };
+
   const filas = campos.map(c => {
-    const v = datos ? datos[c.k] : undefined;
-    const falta = c.crit && lvCampoVacio(c, v);
-    return '<tr' + (falta ? ' class="lv-falta"' : '') + '>' +
-             '<th scope="row">' +
-               '<span class="lv-resp-l">' +
-                 (c.crit ? '<i class="lv-punto" aria-hidden="true"></i>' : '') +
-                 '<span>' + esc(c.l) + '</span>' +
-               '</span>' +
-               (c.h ? '<small>' + esc(c.h) + '</small>' : '') +
-             '</th>' +
-             '<td class="lv-td-resp">' + controlHTML(c, v, ruta) + '</td>' +
+    const v = (datos && datos[c.k] && typeof datos[c.k] === 'object') ? datos[c.k] : {};
+    const ops = ['<option value="">—</option>'].concat(
+      OP_PERIODO.map(o => '<option value="' + esc(o) + '"' + (v.periodo === o ? ' selected' : '') + '>' + esc(o) + '</option>')
+    ).join('');
+    return '<tr>' +
+             '<th scope="row">' + esc(c.l) + '</th>' +
+             casilla(c, v, 'nosotros') +
+             casilla(c, v, 'cliente') +
+             '<td><select class="lv-resp-periodo" data-ruta="' + esc(ruta + '.' + c.k + '.periodo') + '" ' +
+               'data-tipo="text" aria-label="Periodo de ' + esc(c.l) + '">' + ops + '</select></td>' +
+             '<td><input type="text" class="lv-resp-obs" data-ruta="' + esc(ruta + '.' + c.k + '.obs') + '" ' +
+               'data-tipo="text" value="' + esc(v.obs ?? '') + '" placeholder="Observaciones" ' +
+               'aria-label="Observaciones de ' + esc(c.l) + '"></td>' +
            '</tr>';
   }).join('');
 
   return '<div class="lv-tabla-scroll"><table class="lv-tabla-resp">' +
-           '<thead><tr><th>Actividad o concepto</th><th>Responsable</th></tr></thead>' +
+           '<thead><tr>' +
+             '<th>Concepto</th>' +
+             '<th class="lv-th-x">' + esc(nosotros) + '</th>' +
+             '<th class="lv-th-x">' + esc(cliente) + '</th>' +
+             '<th class="lv-th-per">Periodo</th>' +
+             '<th>Observaciones</th>' +
+           '</tr></thead>' +
            '<tbody>' + filas + '</tbody>' +
          '</table></div>';
 }
@@ -1691,8 +1848,18 @@ document.addEventListener('input', function(e){
   lvAplicarValor(el);
   lvMarcaCampo(el);
   lvTituloSitioVivo(el);
+  lvEncabezadosResp();    // el nombre del cliente encabeza su columna
   renderPanel();          // NUNCA renderFormulario() aquí: se perdería el foco
 });
+
+/* Actualiza en vivo los dos encabezados de la tabla de responsabilidades sin
+   repintar el formulario, para no perder el foco mientras se escribe. */
+function lvEncabezadosResp(){
+  const ths = document.querySelectorAll('.lv-tabla-resp thead th.lv-th-x');
+  if(ths.length < 2) return;
+  ths[0].textContent = lvNombreNosotros();
+  ths[1].textContent = lvNombreCliente();
+}
 
 document.addEventListener('change', function(e){
   const el = e.target;
@@ -1738,19 +1905,33 @@ document.addEventListener('click', function(e){
     estado.sitios.splice(i, 1);
     render();
 
-  } else if(acc === 'agregar-contacto'){
+  } else if(acc === 'resp-x'){
+    /* Marca o desmarca a quién le toca el concepto. Se puede marcar a los dos:
+       eso significa que la responsabilidad es compartida. */
+    const ruta  = b.dataset.ruta, quien = b.dataset.quien;
+    const actual = getEnRuta(estado, ruta);
+    const fila = (actual && typeof actual === 'object') ? actual : {};
+    fila[quien] = !fila[quien];
+    setEnRuta(estado, ruta, fila);
+    b.classList.toggle('lv-marcax-on', !!fila[quien]);
+    b.setAttribute('aria-checked', fila[quien] ? 'true' : 'false');
+    b.textContent = fila[quien] ? '✕' : '';
+    renderPanel();
+
+  } else if(acc === 'agregar-item'){
     const base  = b.dataset.base;
-    const lista = lvListaContactos(getEnRuta(estado, base));
-    if(lista.length < LV_MAX_CONTACTOS) lista.push({});
+    const max   = Number(b.dataset.max) || 10;
+    const lista = lvListaItems(getEnRuta(estado, base));
+    if(lista.length < max) lista.push({});
     setEnRuta(estado, base, lista);
     render();
-    /* Deja el cursor en el nombre del contacto recién agregado. */
-    const nuevo = document.querySelector('[data-ruta="' + base + '.' + (lista.length - 1) + '.nombre"]');
+    /* Deja el cursor en el primer campo del renglón recién agregado. */
+    const nuevo = document.querySelector('[data-ruta^="' + base + '.' + (lista.length - 1) + '."]');
     if(nuevo) nuevo.focus();
 
-  } else if(acc === 'quitar-contacto'){
+  } else if(acc === 'quitar-item'){
     const base  = b.dataset.base;
-    const lista = lvListaContactos(getEnRuta(estado, base));
+    const lista = lvListaItems(getEnRuta(estado, base));
     lista.splice(Number(b.dataset.i), 1);
     setEnRuta(estado, base, lista.length ? lista : [{}]);
     render();
@@ -2131,15 +2312,34 @@ function xlsValorCelda(campo, v){
     const d = xlsFecha(v);
     return d ? { valor:d, fmt:XLS_FMT.fecha } : { valor:String(v), fmt:null };
   }
-  if(t === 'contactos'){
-    /* Un renglón por contacto, en una sola celda multilínea. */
+  if(t === 'lista' || t === 'contactos'){
+    /* Un renglón por elemento, en una sola celda multilínea, usando las
+       etiquetas del sub-schema para que finanzas entienda cada dato. */
+    const sub   = (campo && Array.isArray(campo.campos)) ? campo.campos : null;
     const lista = Array.isArray(v) ? v : [];
-    const texto = lista.map((c, i) => {
-      if(!c || typeof c !== 'object') return '';
-      const partes = [c.nombre, c.puesto, c.tel, c.correo].map(x => String(x ?? '').trim()).filter(Boolean);
+    const texto = lista.map((item, i) => {
+      if(!item || typeof item !== 'object') return '';
+      const partes = sub
+        ? sub.map(f => {
+            const val = String(item[f.k] ?? '').trim();
+            return val ? f.l + ': ' + val : '';
+          }).filter(Boolean)
+        : Object.keys(item).map(k => String(item[k] ?? '').trim()).filter(Boolean);
       return partes.length ? (i + 1) + '. ' + partes.join(' · ') : '';
     }).filter(Boolean).join('\n');
     return { valor: texto, fmt:null, multilinea:true };
+  }
+  if(t === 'resp'){
+    /* Un renglón de responsabilidades: a quién le toca, cada cuándo y notas. */
+    if(!v || typeof v !== 'object') return { valor:'', fmt:null };
+    const quienes = [];
+    if(v.nosotros) quienes.push(lvNombreNosotros());
+    if(v.cliente)  quienes.push(lvNombreCliente());
+    const partes = [];
+    partes.push(quienes.length ? quienes.join(' y ') : 'Sin asignar');
+    if(v.periodo) partes.push('Periodo: ' + v.periodo);
+    if(String(v.obs ?? '').trim()) partes.push(String(v.obs).trim());
+    return { valor: partes.join(' · '), fmt:null };
   }
   if(v !== null && typeof v === 'object') return { valor: JSON.stringify(v), fmt:null };
   return { valor: String(v), fmt:null };
